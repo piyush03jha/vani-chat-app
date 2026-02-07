@@ -1,8 +1,13 @@
 import React from 'react'
+import UserSidebar from './UserSidebar'
+import MessageContainer from './MessageContainer'
 
 const Home = () => {
   return (
-    <div>heoow how are you</div>
+    <div className='flex'>
+      <UserSidebar />
+      <MessageContainer />
+    </div>
   )
 }
 

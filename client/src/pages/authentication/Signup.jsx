@@ -1,51 +1,45 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+// import Signup from './Signup.jsx'
 
 const Signup = () => {
 
-const [signupData, setSignupData] = useState({
-  fullName:"",
-  email:"",
-  password:"",
-  confirmPassword:"",
-})
+  const [signupData, setSignupData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  })
 
-const handleInputChange = (e) => {
+  const handleInputChange = (e) => {
     setSignupData({
+      ...signupData,
       [e.target.name]: e.target.value
     })
-};
-
-
-
-
-
-
-
-
-
+  }
 
   return (
-  <div className='flex items-center justify-center h-screen '>
-  <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-  <legend className="fieldset-legend text-xl font-semibold">Signup</legend>
+    <div className='flex flex-col justify-center m-auto items-center min-h-screen'>
 
-  <label className="label">Name</label>
-  <input type="name" className="input" name='fullName' onChange={handleInputChange} placeholder="Full Name"  />
+  <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+  <legend className="fieldset-legend">Signup</legend>
+
+  <label className="label">Full Name</label>
+  <input type="text" name='fullName' className="input" placeholder="Enter Full Name" onChange={handleInputChange} />
 
   <label className="label">Email</label>
-  <input type="email" className="input" name='email' onChange={handleInputChange} placeholder="Email" />
+  <input type="email" name='email' className="input" placeholder="Email" onChange={handleInputChange} />
 
   <label className="label">Password</label>
-  <input type="password" className="input" name='password' onChange={handleInputChange} placeholder="Password" />
+  <input type="password" name='password' className="input" placeholder="Password" onChange={handleInputChange}/>
 
-  <label className="label"> Confirm Password</label>
-  <input type="password" className="input" name='confirmPassword' onChange={handleInputChange} placeholder="Confirm Password" />
+  <label className="label">Comfirm Password</label>
+  <input type="password" name='confirmPassword' className="input" placeholder="Confirm Password" onChange={handleInputChange} />
 
   <button className="btn btn-neutral mt-4">Signup</button>
-  <p>Already have an account? <Link to="/login" className="text-blue-500 underline">Login</Link></p>
+  <p>Already have an account ! <Link to= '/Login' className='text-blue-400 underline'>Login</Link></p>
   </fieldset>
-</div>
+    </div>
   )
 }
 
