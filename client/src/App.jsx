@@ -1,10 +1,24 @@
-import "./App.css"
+import { useEffect } from "react";
+import "./App.css";
+import { Toaster } from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { getUserProfileThunk } from "./store/slice/user/user.thunk";
 
-const App = () => {
+function App() {
+  
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    (async () => {
+      await dispatch(getUserProfileThunk());
+    })();
+  }, []);
 
   return (
-    <div></div>
-  )
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
+    </>
+  );
 }
 
-export default App
+export default App;

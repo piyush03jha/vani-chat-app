@@ -1,46 +1,132 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-// import Signup from './Signup.jsx'
+import React, { useEffect, useState } from "react";
+import { FaUser } from "react-icons/fa";
+import { IoKeySharp } from "react-icons/io5";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUserThunk } from "../../store/slice/user/user.thunk";
+import toast from "react-hot-toast";
 
 const Signup = () => {
-
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.userReducer);
   const [signupData, setSignupData] = useState({
     fullName: "",
-    email: "",
+    username: "",
     password: "",
-    confirmPassword: ""
-  })
+    confirmPassword: "",
+    gender: "male",
+  });
+
+  useEffect(() => {
+    if (isAuthenticated) navigate("/");
+  }, [isAuthenticated]);
 
   const handleInputChange = (e) => {
-    setSignupData({
-      ...signupData,
-      [e.target.name]: e.target.value
-    })
-  }
+    setSignupData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSignup = async () => {
+    if (signupData.password !== signupData.confirmPassword) {
+      return toast.error("Password and confirm password do not match");
+    }
+    const response = await dispatch(registerUserThunk(signupData));
+    if (response?.payload?.success) {
+      navigate("/");
+    }
+  };
 
   return (
-    <div className='flex flex-col justify-center m-auto items-center min-h-screen'>
+    <div className="flex justify-center items-center p-6 min-h-screen">
+      <div className="max-w-[40rem] w-full flex flex-col gap-5 bg-base-200 p-6 rounded-lg">
+        <h2 className="text-2xl font-semibold">Please Signup..!!</h2>
 
-  <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-  <legend className="fieldset-legend">Signup</legend>
+        <label className="input input-bordered flex items-center gap-2">
+          <FaUser />
+          <input
+            type="text"
+            name="fullName"
+            className="grow"
+            placeholder="Full Name"
+            onChange={handleInputChange}
+          />
+        </label>
 
-  <label className="label">Full Name</label>
-  <input type="text" name='fullName' className="input" placeholder="Enter Full Name" onChange={handleInputChange} />
+        <label className="input input-bordered flex items-center gap-2">
+          <FaUser />
+          <input
+            type="text"
+            name="username"
+            className="grow"
+            placeholder="Username"
+            onChange={handleInputChange}
+          />
+        </label>
 
-  <label className="label">Email</label>
-  <input type="email" name='email' className="input" placeholder="Email" onChange={handleInputChange} />
+        <label className="input input-bordered flex items-center gap-2">
+          <IoKeySharp />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="grow"
+            onChange={handleInputChange}
+          />
+        </label>
 
-  <label className="label">Password</label>
-  <input type="password" name='password' className="input" placeholder="Password" onChange={handleInputChange}/>
+        <label className="input input-bordered flex items-center gap-2">
+          <IoKeySharp />
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            className="grow"
+            onChange={handleInputChange}
+          />
+        </label>
 
-  <label className="label">Comfirm Password</label>
-  <input type="password" name='confirmPassword' className="input" placeholder="Confirm Password" onChange={handleInputChange} />
+        <div className="input input-bordered flex items-center gap-5">
+          <label htmlFor="male" className="flex gap-3 items-center">
+            <input
+              id="male"
+              type="radio"
+              name="gender"
+              value="male"
+              className="radio radio-primary"
+              onChange={handleInputChange}
+            />
+            male
+          </label>
 
-  <button className="btn btn-neutral mt-4">Signup</button>
-  <p>Already have an account ! <Link to= '/Login' className='text-blue-400 underline'>Login</Link></p>
-  </fieldset>
+          <label htmlFor="female" className="flex gap-3 items-center">
+            <input
+              id="female"
+              type="radio"
+              name="gender"
+              value="female"
+              className="radio radio-primary"
+              onChange={handleInputChange}
+            />
+            female
+          </label>
+        </div>
+
+        <button onClick={handleSignup} className="btn btn-primary">
+          Signup
+        </button>
+
+        <p>
+          Already have an account? &nbsp;
+          <Link to="/login" className="text-blue-400 underline">
+            Login
+          </Link>
+        </p>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Signup
+export default Signup;

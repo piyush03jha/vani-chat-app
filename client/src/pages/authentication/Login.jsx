@@ -1,39 +1,77 @@
-import { Link } from 'react-router-dom'
-import Signup from './Signup.jsx'
-import { useState } from 'react'
+import React, { useEffect, useState } from "react";
+import { FaUser } from "react-icons/fa";
+import { IoKeySharp } from "react-icons/io5";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUserThunk } from "../../store/slice/user/user.thunk";
 
 const Login = () => {
-
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.userReducer);
   const [loginData, setLoginData] = useState({
-      email: "",
-      Password: ""
-  })
+    username: "",
+    password: "",
+  });
+
+  useEffect(() => {
+    if (isAuthenticated) navigate("/");
+  }, [isAuthenticated]);
 
   const handleInputChange = (e) => {
-    console.log(e.target.value);
-    setLoginData({
-      ...loginData,
-      [e.target.name]: e.target.value
-    })
-  }
+    setLoginData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleLogin = async () => {
+    const response = await dispatch(loginUserThunk(loginData));
+    if (response?.payload?.success) {
+      navigate("/");
+    }
+  };
 
   return (
-    <div className='flex flex-col justify-center m-auto items-center min-h-screen'>
+    <div className="flex justify-center items-center p-6 min-h-screen">
+      <div className="max-w-[40rem] w-full flex flex-col gap-5 bg-base-200 p-6 rounded-lg">
+        <h2 className="text-2xl font-semibold">Please Login..!!</h2>
 
-  <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-  <legend className="fieldset-legend">Login</legend>
+        <label className="input input-bordered flex items-center gap-2">
+          <FaUser />
+          <input
+            type="text"
+            name="username"
+            className="grow"
+            placeholder="Username"
+            onChange={handleInputChange}
+          />
+        </label>
 
-  <label className="label">Email</label>
-  <input type="email" name="email" className="input" placeholder="Email" onChange={handleInputChange}/>
+        <label className="input input-bordered flex items-center gap-2">
+          <IoKeySharp />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="grow"
+            onChange={handleInputChange}
+          />
+        </label>
 
-  <label className="label">Password</label>
-  <input type="password" name="password" className="input" placeholder="Password" onChange={handleInputChange} />
+        <button onClick={handleLogin} className="btn btn-primary">
+          Login
+        </button>
 
-  <button className="btn btn-neutral mt-4">Login</button>
-  <p>Don't have an account? <Link to= '/Signup' className='text-blue-400 underline'>Signup</Link></p>
-  </fieldset>
+        <p>
+          Don't have an account? &nbsp;
+          <Link to="/signup" className="text-blue-400 underline">
+            Sign Up
+          </Link>
+        </p>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

@@ -11,6 +11,22 @@ const getCookieExpiryMs = () => {
   return cookieExpireDays * 24 * 60 * 60 * 1000;
 };
 
+const isProduction = process.env.NODE_ENV === "production";
+
+const getAuthCookieOptions = () => ({
+  expires: new Date(Date.now() + getCookieExpiryMs()),
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "None" : "Lax",
+});
+
+const getClearCookieOptions = () => ({
+  expires: new Date(Date.now()),
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "None" : "Lax",
+});
+
 export const register = asyncHandler(async (req, res, next) => {
   const { fullName, username, password, gender } = req.body;
 
@@ -46,12 +62,7 @@ export const register = asyncHandler(async (req, res, next) => {
 
   res
     .status(200)
-    .cookie("token", token, {
-      expires: new Date(Date.now() + getCookieExpiryMs()),
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-    })
+    .cookie("token", token, getAuthCookieOptions())
     .json({
       success: true,
       responseData: {
@@ -94,12 +105,7 @@ export const login = asyncHandler(async (req, res, next) => {
 
   res
     .status(200)
-    .cookie("token", token, {
-      expires: new Date(Date.now() + getCookieExpiryMs()),
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-    })
+    .cookie("token", token, getAuthCookieOptions())
     .json({
       success: true,
       responseData: {
@@ -123,10 +129,7 @@ export const getProfile = asyncHandler(async (req, res, next) => {
 export const logout = asyncHandler(async (req, res, next) => {
   res
     .status(200)
-    .cookie("token", "", {
-      expires: new Date(Date.now()),
-      httpOnly: true,
-    })
+    .cookie("token", "", getClearCookieOptions())
     .json({
       success: true,
       message: "Logout successfull!",
